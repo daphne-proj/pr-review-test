@@ -1,0 +1,1 @@
+{"extends":"@daphne-test/tsconfig/base.json","compilerOptions":{"rootDir":"src","outDir":"lib"},"include":["src/**/*.ts"]}

@@ -1,0 +1,11 @@
+{
+  "files": [],
+  "references": [
+    { "path": "packages/core" },
+    { "path": "packages/catalog" },
+    { "path": "packages/checkout" },
+    { "path": "packages/fulfillment" },
+    { "path": "apps/api" },
+    { "path": "apps/worker" }
+  ]
+}

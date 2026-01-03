@@ -6,6 +6,7 @@ export * from './checkout-request';
 export * from './fake-payment';
 export * from './idempotency-record';
 export * from './idempotency-repository';
+export * from './idempotency-conflict';
 export * from './order';
 export * from './order-repository';
 export * from './payment';

@@ -17,3 +17,6 @@ real pull-request run. Scenario tooling and answer keys live in the sibling
 
 The model exercises explicit interleavings only. It does not claim database
 transaction isolation or distributed delivery guarantees.
+
+Checkout retries are scoped by tenant and idempotency key. Reusing a key with a
+different payload is rejected before inventory or payment state changes.

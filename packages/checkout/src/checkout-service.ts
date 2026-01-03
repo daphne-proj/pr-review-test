@@ -7,6 +7,7 @@ import { price } from './pricing';
 import { requestFingerprint } from './checkout-request';
 import { CheckoutAttemptRepository } from './checkout-attempt-repository';
 import { IdempotencyRepository } from './idempotency-repository';
+import { IdempotencyConflict } from './idempotency-conflict';
 
 export interface PlaceOrderInput {
   tenantId: TenantId;
@@ -37,7 +38,12 @@ export class CheckoutService {
   place(input: PlaceOrderInput): PlaceOrderResult {
     if (input.idempotencyKey) {
       const existing = this.idempotency.find(input.tenantId, input.idempotencyKey);
-      if (existing) return existing.result;
+      if (existing) {
+        if (existing.requestFingerprint !== requestFingerprint(input)) {
+          throw new IdempotencyConflict(input.idempotencyKey);
+        }
+        return existing.result;
+      }
     }
     const attemptId = this.ids.next('attempt');
     this.attempts.start({

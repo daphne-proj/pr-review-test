@@ -7,6 +7,7 @@ import { FakePaymentGateway } from './fake-payment';
 import { CheckoutAttemptRepository } from './checkout-attempt-repository';
 import { IdempotencyRepository } from './idempotency-repository';
 import { OrderRepository } from './order-repository';
+import { OrderQueryService } from './order-query';
 
 export function createCommerceSystem(dependencies: { now: () => number; ids: IdSource }) {
   const inventory = new Inventory();
@@ -23,6 +24,7 @@ export function createCommerceSystem(dependencies: { now: () => number; ids: IdS
     outbox,
     idempotency,
     attempts,
+    orderQueries: new OrderQueryService(orders),
     checkout: new CheckoutService(inventory, payments, orders, outbox, clock, dependencies.ids, idempotency, attempts),
     cancellation: new CancellationService(orders, payments, inventory),
   };

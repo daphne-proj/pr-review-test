@@ -6,6 +6,7 @@
     { "path": "packages/checkout" },
     { "path": "packages/fulfillment" },
     { "path": "apps/api" },
+    { "path": "apps/admin" },
     { "path": "apps/worker" }
   ]
 }

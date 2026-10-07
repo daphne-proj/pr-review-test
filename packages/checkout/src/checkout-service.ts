@@ -86,6 +86,7 @@ export class CheckoutService {
       paymentId,
       reservationId,
       eventId,
+      placedAt: this.clock.now(),
       state: 'paid',
     });
     this.outbox.append({ id: eventId, type: 'order.placed', occurredAt: this.clock.now(), payload: { orderId } });

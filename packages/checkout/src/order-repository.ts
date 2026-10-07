@@ -15,4 +15,8 @@ export class OrderRepository {
   all(): Order[] {
     return [...this.orders.values()];
   }
+
+  forTenant(tenantId: string): Order[] {
+    return this.all().filter((order) => order.tenantId === tenantId);
+  }
 }

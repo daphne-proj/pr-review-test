@@ -10,5 +10,6 @@ export interface Order {
   paymentId: PaymentId;
   reservationId: ReservationId;
   eventId: string;
+  placedAt: number;
   state: 'paid' | 'cancelled';
 }

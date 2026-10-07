@@ -20,3 +20,7 @@ transaction isolation or distributed delivery guarantees.
 
 Checkout retries are scoped by tenant and idempotency key. Reusing a key with a
 different payload is rejected before inventory or payment state changes.
+
+The admin application renders a tenant-scoped order operations dashboard from
+the checkout read model. SQL migrations document the persisted order and
+idempotency constraints used by the same flow.

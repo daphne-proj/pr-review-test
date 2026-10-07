@@ -1,0 +1,12 @@
+:root { color-scheme: light; font-family: system-ui, sans-serif; background: #f4f6f8; color: #17202a; }
+body { margin: 0; } main { max-width: 1100px; margin: auto; padding: 2rem; }
+header p { color: #59636e; margin-bottom: .25rem; } h1 { margin-top: 0; }
+.summary { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+.summary article, .filters, table, .empty { background: white; border: 1px solid #dce1e6; border-radius: .5rem; padding: 1rem; }
+.summary strong, .summary span { display: block; } .summary strong { font-size: 1.5rem; }
+.filters { display: flex; gap: 1rem; margin: 1rem 0; align-items: end; }
+.filters label { display: grid; gap: .35rem; } input, select, button { padding: .5rem; }
+table { width: 100%; border-collapse: collapse; } th, td { padding: .75rem; text-align: left; border-bottom: 1px solid #edf0f2; }
+.status { border-radius: 999px; padding: .2rem .55rem; text-transform: capitalize; }
+.status--paid { background: #d9f5e5; color: #126b3a; } .status--cancelled { background: #fde2e2; color: #922; }
+@media (max-width: 700px) { .summary { grid-template-columns: 1fr 1fr; } .filters { align-items: stretch; flex-direction: column; } }

@@ -1,3 +1,4 @@
+export * from './delivery-audit-log';
 export * from './delivery-log';
 export * from './delivery-worker';
 export * from './fulfillment-service';

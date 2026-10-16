@@ -62,7 +62,7 @@ export class CheckoutService {
       eventId,
       state: 'paid',
     });
-    this.outbox.append({ id: eventId, type: 'order.placed', occurredAt: this.clock.now(), payload: { orderId } });
+    this.outbox.append({ id: eventId, tenantId: input.tenantId, type: 'order.placed', occurredAt: this.clock.now(), payload: { orderId } });
     return { ok: true, orderId, totalCents: total.totalCents };
   }
 }

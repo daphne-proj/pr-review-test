@@ -1,4 +1,5 @@
-import { Cents, assertCents, discountCents, multiplyCents } from '../../core/src';
+import { Cents, assertCents, multiplyCents } from '../../core/src';
+import { discountCents } from './promotion';
 
 export interface PriceInput {
   unitPriceCents: Cents;
@@ -16,7 +17,7 @@ export interface PriceBreakdown {
 const FREE_SHIPPING_CENTS = 5_000;
 const SHIPPING_CENTS = 1_000;
 
-export function price(input: PriceInput): PriceBreakdown {
+export function calculatePrice(input: PriceInput): PriceBreakdown {
   const subtotalCents = multiplyCents(input.unitPriceCents, input.quantity);
   const promotionDiscount = discountCents(subtotalCents, input.promotionBps);
   const discounted = subtotalCents - promotionDiscount;
@@ -28,3 +29,5 @@ export function price(input: PriceInput): PriceBreakdown {
     totalCents: assertCents(discounted + shippingCents),
   };
 }
+
+export { calculatePrice as price };

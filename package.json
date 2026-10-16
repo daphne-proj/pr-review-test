@@ -7,7 +7,9 @@
     "clean": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\"",
     "build": "npm run clean && tsc -p tsconfig.build.json",
     "test:config": "sh tooling/tests/workspace-config.test.sh",
-    "test": "npm run build && npm run test:config"
+    "test:deployment": "sh deploy/tests/package.test.sh",
+    "test": "npm run test:config && npm run test:deployment",
+    "package:deployment": "./deploy/package.sh"
   },
   "devDependencies": {
     "typescript": "5.6.3"

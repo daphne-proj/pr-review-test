@@ -24,7 +24,7 @@ Shared TypeScript defaults live in the `tooling/tsconfig` workspace. Apps,
 packages, and the root build inherit `@daphne-test/tsconfig/base.json`; run
 `npm ci` after switching to this layout to refresh workspace links.
 
-The deployment bundle contains compiled modules and documentation. See the
+The deployment bundle contains compiled modules, package metadata, and documentation. See the
 [deployment instructions](docs/deployment.md) for prerequisites, extraction,
 artifact checks, and CI behavior. No production TypeScript or runtime behavior
 changes as part of this configuration migration.

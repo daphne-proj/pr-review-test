@@ -12,7 +12,7 @@ const { execFileSync } = require('node:child_process');
 const repo = process.cwd();
 const run = (command, args, cwd = repo) => execFileSync(command, args, { cwd, encoding: 'utf8', stdio: 'pipe' });
 
-test('release contains fresh dependency-free modules and a resolvable documentation symlink', t => {
+test('release loads fresh modules inside an ESM consumer and preserves its documentation symlink', t => {
   const extracted = fs.mkdtempSync(path.join(os.tmpdir(), 'commerce-extracted-'));
   t.after(() => fs.rmSync(extracted, { recursive: true, force: true }));
   fs.mkdirSync('dist', { recursive: true });
@@ -23,6 +23,7 @@ test('release contains fresh dependency-free modules and a resolvable documentat
   assert.ok(entries.every(entry => entry.startsWith('dist/') || entry === 'docs/deployment.md' || entry === 'deploy/README.md'));
   assert.ok(!entries.includes('dist/stale.txt'));
   run('tar', ['-xzf', archive, '-C', extracted]);
+  fs.writeFileSync(path.join(extracted, 'package.json'), '{"type":"module"}\n');
   assert.equal(fs.existsSync(path.join(extracted, 'node_modules')), false);
   assert.deepEqual(require(path.join(extracted, 'dist/apps/api/src')).health(), { status: 'ok' });
   const worker = require(path.join(extracted, 'dist/apps/worker/src'));

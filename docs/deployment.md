@@ -16,8 +16,10 @@ The root build still emits CommonJS JavaScript and declarations under `dist/`;
 source behavior and effective compiler settings are unchanged.
 
 `package:deployment` performs a clean build, then writes
-`releases/commerce.tar.gz` containing only compiled `dist/` modules and this
-documentation. `deploy/README.md` is a relative symlink to this file; the archive
+`releases/commerce.tar.gz` containing compiled `dist/` modules, their package
+metadata, and this documentation. `dist/package.json` explicitly declares
+CommonJS so the modules also load when extracted inside an ESM consumer project.
+`deploy/README.md` is a relative symlink to this file; the archive
 preserves it. Sources, node_modules, Git metadata, and old build files are excluded.
 The executable `deploy/package.sh` also works from another working directory.
 A failed build or archive operation exits nonzero and leaves the previous

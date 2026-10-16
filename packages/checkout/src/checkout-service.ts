@@ -1,5 +1,5 @@
 import { Inventory } from '../../catalog/src';
-import { Clock, IdSource, TenantId } from '../../core/src';
+import { assertTenantId, Clock, IdSource, TenantId } from '../../core/src';
 import { Outbox } from '../../fulfillment/src/outbox';
 import { OrderRepository } from './order-repository';
 import { PaymentGateway } from './payment';
@@ -29,6 +29,7 @@ export class CheckoutService {
   ) {}
 
   place(input: PlaceOrderInput): PlaceOrderResult {
+    assertTenantId(input.tenantId);
     const total = price(input);
     const reservationId = this.ids.next('reservation');
     const reservation = this.inventory.reserve({

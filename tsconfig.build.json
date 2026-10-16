@@ -1,14 +1,10 @@
 {
+  "extends": "@daphne-test/tsconfig/base.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "Node",
-    "strict": true,
+    "composite": false,
     "esModuleInterop": true,
     "rootDir": ".",
-    "outDir": "dist",
-    "declaration": true,
-    "skipLibCheck": true
+    "outDir": "dist"
   },
   "include": ["apps/**/*.ts", "packages/**/*.ts"],
   "exclude": ["dist", "node_modules"]

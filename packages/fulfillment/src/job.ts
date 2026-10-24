@@ -5,6 +5,7 @@ export interface DeliveryJob {
   status: 'pending' | 'leased' | 'complete';
   leaseOwner?: string;
   leaseUntil?: number;
+  leaseGeneration?: number;
 }
 
 export type NewDeliveryJob = Pick<DeliveryJob, 'id' | 'eventId' | 'payload'>;

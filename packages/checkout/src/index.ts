@@ -1,4 +1,6 @@
 export * from './cancellation-service';
+export * from './cart-quote-types';
+export * from './cart-quote';
 export * from './checkout-service';
 export * from './fake-payment';
 export * from './order';

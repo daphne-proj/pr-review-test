@@ -6,7 +6,12 @@ export function assertCents(value: number): Cents {
 }
 
 export function multiplyCents(unitPrice: Cents, quantity: number): Cents {
-  if (!Number.isSafeInteger(quantity) || quantity <= 0) throw new Error('invalid quantity');
+  if (!Number.isSafeInteger(quantity) || quantity <= 0) {
+    throw new Error('invalid quantity');
+  }
+
+  assertCents(unitPrice);
+
   return assertCents(unitPrice * quantity);
 }
 

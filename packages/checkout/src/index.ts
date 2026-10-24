@@ -7,4 +7,7 @@ export * from './payment';
 export * from './pricing';
 export * from './sales-report';
 export * from './system';
+export * from './support-note';
+export * from './support-note-repository';
+export * from './support-note-service';
 export { sequenceIds } from '../../core/src';

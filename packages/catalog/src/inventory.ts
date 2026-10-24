@@ -1,6 +1,17 @@
 import { Sku } from '../../core/src';
 import { Reservation, ReserveInput } from './reservation';
 import { StockLedger } from './stock-ledger';
+import {
+  StockAdjustment,
+  StockAdjustmentReceipt,
+  validateStockAdjustment,
+} from './stock-adjustment';
+import {
+  ReservationQuery,
+  validateReservationQuery,
+  matchesReservation,
+  compareReservations,
+} from './reservation-query';
 
 export class Inventory {
   private readonly counts = new Map<Sku, number>();
@@ -12,11 +23,7 @@ export class Inventory {
       throw new Error('invalid stock quantity');
     }
 
-    const total = this.available(sku) + quantity;
-
-    if (!Number.isSafeInteger(total)) {
-      throw new Error('stock total exceeds safe integer range');
-    }
+    const total = this.checkedTotal(this.available(sku), quantity);
 
     this.counts.set(sku, total);
     this.ledger.record({ sku, delta: quantity, reason: 'stocked' });
@@ -24,6 +31,56 @@ export class Inventory {
 
   available(sku: Sku): number {
     return this.counts.get(sku) ?? 0;
+  }
+
+  applyAdjustments(
+    adjustments: readonly StockAdjustment[],
+  ): StockAdjustmentReceipt[] {
+    if (adjustments.length === 0) {
+      throw new Error('adjustments must not be empty');
+    }
+
+    const pendingCounts = new Map<Sku, number>();
+    const receipts: StockAdjustmentReceipt[] = [];
+
+    for (const adjustment of adjustments) {
+      validateStockAdjustment(adjustment);
+
+      const before =
+        pendingCounts.get(adjustment.sku) ?? this.available(adjustment.sku);
+      const after = this.checkedTotal(before, adjustment.delta);
+      pendingCounts.set(adjustment.sku, after);
+      receipts.push({ ...adjustment, before, after });
+    }
+
+    /* The ledger rejects duplicate IDs before either collection changes. */
+    this.ledger.recordMany(
+      receipts.map((receipt) => ({
+        ...receipt,
+        reason: 'adjusted',
+        adjustmentReason: receipt.reason,
+      })),
+    );
+
+    for (const [sku, quantity] of pendingCounts) {
+      this.counts.set(sku, quantity);
+    }
+
+    return receipts;
+  }
+
+  private checkedTotal(before: number, delta: number): number {
+    const total = before + delta;
+
+    if (
+      !Number.isSafeInteger(delta) ||
+      !Number.isSafeInteger(total) ||
+      total < 0
+    ) {
+      throw new Error('stock total outside safe integer range');
+    }
+
+    return total;
   }
 
   reserve(input: ReserveInput): Reservation | undefined {
@@ -44,18 +101,38 @@ export class Inventory {
   release(id: string): boolean {
     const reservation = this.held.get(id);
     if (!reservation || reservation.state !== 'active') return false;
+
+    const total = this.checkedTotal(
+      this.available(reservation.sku),
+      reservation.quantity,
+    );
+
     reservation.state = 'released';
-    this.counts.set(reservation.sku, this.available(reservation.sku) + reservation.quantity);
-    this.ledger.record({ sku: reservation.sku, delta: reservation.quantity, reason: 'released' });
+    this.counts.set(reservation.sku, total);
+    this.ledger.record({
+      sku: reservation.sku,
+      delta: reservation.quantity,
+      reason: 'released',
+    });
     return true;
   }
 
   releaseCommitted(id: string): boolean {
     const reservation = this.held.get(id);
     if (!reservation || reservation.state !== 'committed') return false;
+
+    const total = this.checkedTotal(
+      this.available(reservation.sku),
+      reservation.quantity,
+    );
+
     reservation.state = 'released';
-    this.counts.set(reservation.sku, this.available(reservation.sku) + reservation.quantity);
-    this.ledger.record({ sku: reservation.sku, delta: reservation.quantity, reason: 'released' });
+    this.counts.set(reservation.sku, total);
+    this.ledger.record({
+      sku: reservation.sku,
+      delta: reservation.quantity,
+      reason: 'released',
+    });
     return true;
   }
 
@@ -72,5 +149,20 @@ export class Inventory {
 
   reservations(): Reservation[] {
     return [...this.held.values()].map((reservation) => ({ ...reservation }));
+  }
+
+  queryReservations(query: ReservationQuery = {}): Reservation[] {
+    validateReservationQuery(query);
+    const rows = this.reservations();
+
+    for (const reservation of rows) {
+      if (!Number.isFinite(reservation.expiresAt)) {
+        throw new Error('invalid reservation expiry');
+      }
+    }
+
+    return rows
+      .filter((reservation) => matchesReservation(reservation, query))
+      .sort(compareReservations);
   }
 }

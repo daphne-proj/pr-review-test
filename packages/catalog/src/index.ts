@@ -4,3 +4,6 @@ export * from './inventory-report';
 export * from './product';
 export * from './reservation';
 export * from './stock-ledger';
+export * from './stock-adjustment';
+export * from './stock-adjustment-service';
+export * from './reservation-query';

@@ -8,8 +8,17 @@ export class Inventory {
   readonly ledger = new StockLedger();
 
   stock(sku: Sku, quantity: number): void {
-    if (!Number.isSafeInteger(quantity) || quantity <= 0) throw new Error('invalid stock quantity');
-    this.counts.set(sku, this.available(sku) + quantity);
+    if (!Number.isSafeInteger(quantity) || quantity <= 0) {
+      throw new Error('invalid stock quantity');
+    }
+
+    const total = this.available(sku) + quantity;
+
+    if (!Number.isSafeInteger(total)) {
+      throw new Error('stock total exceeds safe integer range');
+    }
+
+    this.counts.set(sku, total);
     this.ledger.record({ sku, delta: quantity, reason: 'stocked' });
   }
 
@@ -62,6 +71,6 @@ export class Inventory {
   }
 
   reservations(): Reservation[] {
-    return [...this.held.values()];
+    return [...this.held.values()].map((reservation) => ({ ...reservation }));
   }
 }

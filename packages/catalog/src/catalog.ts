@@ -12,6 +12,10 @@ export class Catalog {
     return this.products.get(sku);
   }
 
+  remove(sku: Sku): boolean {
+    return this.products.delete(sku);
+  }
+
   list(): Product[] {
     return [...this.products.values()];
   }

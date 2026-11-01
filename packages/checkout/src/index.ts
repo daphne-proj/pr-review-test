@@ -1,3 +1,5 @@
+export * from './cancellation-batch';
+export * from './cancellation-batch-service';
 export * from './cancellation-service';
 export * from './checkout-service';
 export * from './fake-payment';

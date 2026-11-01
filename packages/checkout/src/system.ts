@@ -1,6 +1,7 @@
 import { Inventory } from '../../catalog/src';
 import { Clock, IdSource } from '../../core/src';
-import { Outbox } from '../../fulfillment/src';
+import { JobQueue, Outbox } from '../../fulfillment/src';
+import { CancellationBatchService } from './cancellation-batch-service';
 import { CancellationService } from './cancellation-service';
 import { CheckoutService } from './checkout-service';
 import { FakePaymentGateway } from './fake-payment';
@@ -12,6 +13,8 @@ export function createCommerceSystem(dependencies: { now: () => number; ids: IdS
   const orders = new OrderRepository();
   const outbox = new Outbox();
   const clock: Clock = { now: dependencies.now };
+  const cancellationQueue = new JobQueue();
+
   return {
     inventory,
     payments,
@@ -19,5 +22,12 @@ export function createCommerceSystem(dependencies: { now: () => number; ids: IdS
     outbox,
     checkout: new CheckoutService(inventory, payments, orders, outbox, clock, dependencies.ids),
     cancellation: new CancellationService(orders, payments, inventory),
+    cancellationBatches: new CancellationBatchService(
+      orders,
+      payments,
+      cancellationQueue,
+      clock,
+      dependencies.ids,
+    ),
   };
 }
